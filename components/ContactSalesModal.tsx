@@ -56,7 +56,7 @@ export default function ContactSalesModal() {
       }}
     >
       <Dialog.Trigger asChild>
-        <button className="rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-700">
+        <button data-contact-trigger className="hidden rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-700">
           Contact Sales
         </button>
       </Dialog.Trigger>

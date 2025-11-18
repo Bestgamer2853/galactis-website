@@ -1,7 +1,7 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -70,69 +70,27 @@ type FormValues = SalesFormValues | PartnerFormValues | SupportFormValues;
 export default function ContactSalesModal({ intent: initialIntent = "sales", partnerType: initialPartnerType }: ContactSalesModalProps) {
   const [open, setOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [intent, setIntent] = useState<FormIntent>(initialIntent);
-  const [_partnerType, setPartnerType] = useState<PartnerType | undefined>(initialPartnerType);
+  // Intent is fixed based on prop - no switching allowed
+  const intent = initialIntent;
   
   // Generate unique trigger ID based on intent and partnerType
   const triggerId = `contact-trigger-${initialIntent}-${initialPartnerType || "default"}`;
 
   const schema = useMemo(() => getSchema(intent), [intent]);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-    setValue,
-  } = useForm<FormValues>({
+  const formMethods = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       intent,
       ...(initialPartnerType && intent === "partner" ? { partnerType: initialPartnerType } : {}),
     },
   });
-
-  // Update form when intent or partnerType changes externally
-  useEffect(() => {
-    if (initialIntent && initialIntent !== intent) {
-      setIntent(initialIntent);
-      setValue("intent", initialIntent);
-      if (initialIntent === "partner" && initialPartnerType) {
-        reset({
-          intent: initialIntent,
-          partnerType: initialPartnerType,
-        } as PartnerFormValues);
-      } else {
-        reset({
-          intent: initialIntent,
-        } as FormValues);
-      }
-    }
-  }, [initialIntent, intent, setValue, reset, initialPartnerType]);
-
-  useEffect(() => {
-    if (initialPartnerType && intent === "partner") {
-      setPartnerType(initialPartnerType);
-      setValue("partnerType", initialPartnerType as any);
-    }
-  }, [initialPartnerType, intent, setValue]);
-
-  // Handle intent change
-  const handleIntentChange = (newIntent: FormIntent) => {
-    setIntent(newIntent);
-    // Reset form with new intent and clear all fields
-    if (newIntent === "partner" && initialPartnerType) {
-      reset({
-        intent: newIntent,
-        partnerType: initialPartnerType,
-      } as PartnerFormValues);
-    } else {
-      reset({
-        intent: newIntent,
-      } as FormValues);
-    }
-    // Update the form value
-    setValue("intent", newIntent);
-  };
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = formMethods;
 
   async function onSubmit(values: FormValues) {
     try {
@@ -193,6 +151,7 @@ export default function ContactSalesModal({ intent: initialIntent = "sales", par
           setSubmitted(false);
           trackEvent("contact_modal_opened", { intent });
         } else {
+          // Reset form when modal closes
           reset();
         }
       }}
@@ -235,29 +194,9 @@ export default function ContactSalesModal({ intent: initialIntent = "sales", par
             </div>
           ) : (
             <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
-              {/* Intent Selector */}
-              <div>
-                <label htmlFor="intent-select" className="block text-sm font-medium text-zinc-700 dark:text-zinc-200">
-                  What do you want to talk about?
-                </label>
-                <select
-                  id="intent-select"
-                  value={intent}
-                  onChange={(e) => {
-                    const newIntent = e.target.value as FormIntent;
-                    handleIntentChange(newIntent);
-                  }}
-                  className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm text-zinc-900 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-purple-500 dark:focus:ring-purple-900/30"
-                >
-                  <option value="sales">Talk to Sales</option>
-                  <option value="partner">Apply as Partner</option>
-                  <option value="support">Support/Other</option>
-                </select>
-              </div>
-
               {/* Sales Intent Fields */}
               {intent === "sales" && (
-                <>
+                <div key="sales-form-content">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
                       <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200">Name *</label>
@@ -308,12 +247,12 @@ export default function ContactSalesModal({ intent: initialIntent = "sales", par
                     />
                     {"message" in errors && errors.message && <p className="mt-1 text-sm text-red-600">{errors.message.message}</p>}
                   </div>
-                </>
+                </div>
               )}
 
               {/* Partner Intent Fields */}
               {intent === "partner" && (
-                <>
+                <div key="partner-form-content">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
                       <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200">Name *</label>
@@ -400,12 +339,12 @@ export default function ContactSalesModal({ intent: initialIntent = "sales", par
                       {...register("additionalInfo")}
                     />
                   </div>
-                </>
+                </div>
               )}
 
               {/* Support Intent Fields */}
               {intent === "support" && (
-                <>
+                <div key="support-form-content">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
                       <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200">Name *</label>
@@ -459,7 +398,7 @@ export default function ContactSalesModal({ intent: initialIntent = "sales", par
                 />
                 {"message" in errors && errors.message && <p className="mt-1 text-sm text-red-600">{errors.message.message}</p>}
               </div>
-                </>
+                </div>
               )}
 
               <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end">

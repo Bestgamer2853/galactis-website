@@ -83,16 +83,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="mt-12 grid gap-6 md:grid-cols-3">
-          {values.map((value) => (
-            <div key={value.title} className="rounded-2xl border border-zinc-200 p-6 shadow-sm dark:border-zinc-800">
-              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">{value.title}</h2>
-              <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">{value.description}</p>
-            </div>
-          ))}
-        </section>
-
-        <section className="mt-16">
+        <section className="mt-12">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.3em] text-purple-600">Leadership</p>
@@ -105,23 +96,44 @@ export default function AboutPage() {
           <div className="mt-8 space-y-8">
             <div className="grid gap-6 md:grid-cols-3">
               {leadershipTop.map((leader) => (
-                <div key={leader.name} className="rounded-2xl border border-zinc-200 p-6 dark:border-zinc-800">
-                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-purple-600">{leader.title}</p>
-                  <h3 className="mt-2 text-xl font-semibold text-zinc-900 dark:text-zinc-100">{leader.name}</h3>
-                  <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">{leader.bio}</p>
+                <div 
+                  key={leader.name} 
+                  className="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-gradient-to-br from-white to-zinc-50 p-6 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20 dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-950"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 via-purple-500/0 to-purple-500/0 transition-all duration-300 group-hover:from-purple-500/5 group-hover:via-indigo-500/5 group-hover:to-purple-500/5" />
+                  <div className="relative">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-600 dark:text-purple-400">{leader.title}</p>
+                    <h3 className="mt-3 text-xl font-bold text-zinc-900 dark:text-zinc-100">{leader.name}</h3>
+                    <p className="mt-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{leader.bio}</p>
+                  </div>
                 </div>
               ))}
             </div>
             <div className="grid gap-6 md:grid-cols-2 md:max-w-3xl md:mx-auto">
               {leadershipBottom.map((leader) => (
-                <div key={leader.name} className="rounded-2xl border border-zinc-200 p-6 dark:border-zinc-800">
-                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-purple-600">{leader.title}</p>
-                  <h3 className="mt-2 text-xl font-semibold text-zinc-900 dark:text-zinc-100">{leader.name}</h3>
-                  <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">{leader.bio}</p>
+                <div 
+                  key={leader.name} 
+                  className="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-gradient-to-br from-white to-zinc-50 p-6 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20 dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-950"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 via-purple-500/0 to-purple-500/0 transition-all duration-300 group-hover:from-purple-500/5 group-hover:via-indigo-500/5 group-hover:to-purple-500/5" />
+                  <div className="relative">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-600 dark:text-purple-400">{leader.title}</p>
+                    <h3 className="mt-3 text-xl font-bold text-zinc-900 dark:text-zinc-100">{leader.name}</h3>
+                    <p className="mt-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{leader.bio}</p>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
+        </section>
+
+        <section className="mt-16 grid gap-6 md:grid-cols-3">
+          {values.map((value) => (
+            <div key={value.title} className="rounded-2xl border border-zinc-200 p-6 shadow-sm dark:border-zinc-800">
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">{value.title}</h2>
+              <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">{value.description}</p>
+            </div>
+          ))}
         </section>
 
         <section className="mt-16">

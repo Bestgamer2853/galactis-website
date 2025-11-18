@@ -1,4 +1,5 @@
 import { CheckCircle } from "lucide-react";
+import Link from "next/link";
 
 const productLinks = [
   { label: "IT Asset Management", href: "/products/itam" },
@@ -33,10 +34,17 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
           <div>
-            <div className="mb-4 flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
-              <span className="h-7 w-7 rounded bg-gradient-to-br from-purple-500 to-emerald-500" />
-              <span className="text-base font-semibold">Galactis.ai</span>
-            </div>
+            <Link href="/" className="mb-4 flex items-center gap-1.5 text-zinc-900 dark:text-zinc-100">
+              <img 
+                src="/galactis-logo.svg" 
+                alt="Galactis.ai company logo, stylized geometric 'G' with blue-purple gradient" 
+                className="h-10 w-auto flex-shrink-0"
+                style={{ display: "block", maxWidth: "none", objectFit: "contain" }}
+              />
+              <span className="text-base font-semibold bg-gradient-to-r from-purple-600 to-emerald-600 bg-clip-text text-transparent leading-none">
+                Galactis.ai
+              </span>
+            </Link>
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
               Modern ITAM, network intelligence, and AI agent orchestration sourced from the same operational data.
             </p>

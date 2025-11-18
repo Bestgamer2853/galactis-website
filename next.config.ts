@@ -52,9 +52,8 @@ const nextConfig: NextConfig = {
   },
 
   // Turbopack configuration (Next.js 16+)
-  // Empty config tells Next.js to use default Turbopack settings
-  // Remove webpack config as Turbopack is the new default
-  turbopack: {},
+  // Disabled due to runtime chunk issues - using webpack instead
+  // turbopack: {},
 };
 
 export default nextConfig;

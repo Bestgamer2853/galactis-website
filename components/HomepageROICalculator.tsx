@@ -59,9 +59,19 @@ export default function HomepageROICalculator() {
                 value={budget.toLocaleString('en-IN')}
                 onChange={(e) => {
                   const val = e.target.value.replace(/[^0-9]/g, '');
-                  setBudget(parseInt(val) || 0);
+                  if (val) {
+                    setBudget(parseInt(val));
+                  } else {
+                    setBudget(defaultBudgetINR);
+                  }
                 }}
-                placeholder="1,77,00,000"
+                onBlur={(e) => {
+                  const val = e.target.value.replace(/[^0-9]/g, '');
+                  if (!val || parseInt(val) === 0) {
+                    setBudget(defaultBudgetINR);
+                  }
+                }}
+                placeholder={defaultBudgetINR.toLocaleString('en-IN')}
                 className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-lg dark:border-gray-700 dark:bg-gray-900"
               />
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">

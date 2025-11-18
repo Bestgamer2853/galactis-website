@@ -3,10 +3,10 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { ArrowRight, CheckCircle, Users, Building2, Briefcase, Code, MessageCircle, Play } from "lucide-react";
+import { ArrowRight, CheckCircle, Users, Building2, Briefcase, Code, MessageCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import ContactSalesModal from "@/components/ContactSalesModal";
+import PartnerSuccessIllustration from "@/components/PartnerSuccessIllustration";
 
 const steps = [
   { id: 1, label: "Create Account", description: "Sign up for partner portal" },
@@ -72,6 +72,8 @@ const partnerTypes = [
 
 export default function PartnersPage() {
   const [showFloatingButtons, setShowFloatingButtons] = useState(false);
+  const [modalIntent, setModalIntent] = useState<"sales" | "partner" | "support">("partner");
+  const [modalPartnerType, setModalPartnerType] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,6 +82,22 @@ export default function PartnersPage() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handlePartnerClick = (partnerType: string) => {
+    setModalIntent("partner");
+    setModalPartnerType(partnerType);
+    // Trigger the modal with the specific intent and partner type
+    setTimeout(() => {
+      const button = document.querySelector(`[data-contact-trigger][data-intent="partner"][data-partner-type="${partnerType}"]`) as HTMLButtonElement;
+      if (!button) {
+        // Fallback: try to find any partner modal trigger
+        const fallbackButton = document.querySelector('[data-contact-trigger][data-intent="partner"]') as HTMLButtonElement;
+        fallbackButton?.click();
+      } else {
+        button.click();
+      }
+    }, 100); // Small delay to ensure state update
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-black">
@@ -157,13 +175,13 @@ export default function PartnersPage() {
                     </li>
                   ))}
                 </ul>
-                <Link
-                  href={partner.href}
-                  className="mt-6 flex items-center gap-2 text-sm font-semibold text-purple-600 transition-colors hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
+                <button
+                  onClick={() => handlePartnerClick(partner.name)}
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-purple-500/50 sm:justify-start"
                 >
                   {partner.cta}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
+                </button>
               </motion.div>
             ))}
           </div>
@@ -202,17 +220,9 @@ export default function PartnersPage() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="relative"
+                className="relative aspect-video overflow-hidden rounded-2xl"
               >
-                {/* Placeholder for partner success image */}
-                <div className="aspect-video rounded-2xl bg-white/10 backdrop-blur-sm">
-                  <div className="flex h-full items-center justify-center">
-                    <div className="text-center">
-                      <Users className="mx-auto h-16 w-16 text-white/40" />
-                      <p className="mt-4 text-sm text-white/60">Partner Success Stories</p>
-                    </div>
-                  </div>
-                </div>
+                <PartnerSuccessIllustration />
               </motion.div>
             </div>
           </div>
@@ -277,45 +287,41 @@ export default function PartnersPage() {
         </section>
       </main>
 
-      {/* Floating Action Buttons - Mobile Optimized */}
+      {/* Floating Action Button - Mobile Optimized */}
       {showFloatingButtons && (
-        <motion.div
+        <motion.button
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          className="fixed bottom-4 right-4 z-50 flex flex-col gap-3 sm:bottom-6 sm:right-6"
-        >
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              // Trigger contact modal - will be handled by ContactSalesModal component
-              const button = document.querySelector('[data-contact-trigger]') as HTMLButtonElement;
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => {
+            setModalIntent("partner");
+            setModalPartnerType(undefined);
+            // Trigger contact modal - will be handled by ContactSalesModal component
+            setTimeout(() => {
+              const button = document.querySelector('[data-contact-trigger][data-intent="partner"]') as HTMLButtonElement;
               button?.click();
-            }}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-3 text-xs font-semibold text-white shadow-lg shadow-purple-500/50 transition-all hover:shadow-xl hover:shadow-purple-500/70 sm:px-6 sm:text-sm"
-            aria-label="Contact Sales"
-          >
-            <MessageCircle className="h-5 w-5 flex-shrink-0" />
-            <span className="hidden sm:inline">Contact Sales</span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-full border-2 border-purple-600 bg-white px-4 py-3 text-xs font-semibold text-purple-600 shadow-lg transition-all hover:bg-purple-50 dark:border-purple-400 dark:bg-zinc-950 dark:text-purple-400 dark:hover:bg-zinc-900 sm:px-6 sm:text-sm"
-            aria-label="Watch Demo"
-          >
-            <Play className="h-5 w-5 flex-shrink-0" />
-            <span className="hidden sm:inline">Watch Demo</span>
-          </motion.button>
-        </motion.div>
+            }, 100);
+          }}
+          className="fixed bottom-4 right-4 z-50 flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-3 text-xs font-semibold text-white shadow-lg shadow-purple-500/50 transition-all hover:shadow-xl hover:shadow-purple-500/70 sm:bottom-6 sm:right-6 sm:px-6 sm:text-sm"
+          aria-label="Apply as Partner"
+        >
+          <MessageCircle className="h-5 w-5 flex-shrink-0" />
+          <span className="hidden sm:inline">Apply as Partner</span>
+        </motion.button>
       )}
 
       {/* Hidden trigger for ContactSalesModal */}
       <div className="hidden">
-        <ContactSalesModal />
+        <ContactSalesModal 
+          key={`${modalIntent}-${modalPartnerType || "default"}`}
+          intent={modalIntent} 
+          partnerType={modalPartnerType as "Reseller" | "Service Provider" | "Consulting" | "Build" | undefined} 
+        />
       </div>
       <Footer />
     </div>
   );
 }
+

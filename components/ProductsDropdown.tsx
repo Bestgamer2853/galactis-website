@@ -39,7 +39,7 @@ export default function ProductsDropdown() {
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="z-[140] min-w-[320px] rounded-xl border border-zinc-200 bg-white p-4 shadow-xl dark:border-zinc-800 dark:bg-zinc-950"
+          className="z-[150] min-w-[320px] rounded-xl border border-zinc-200 bg-white p-4 shadow-xl dark:border-zinc-800 dark:bg-zinc-950"
           sideOffset={8}
           align="start"
         >

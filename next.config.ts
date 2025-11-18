@@ -1,19 +1,22 @@
 import type { NextConfig } from "next";
 
 /**
- * Next.js 16 Configuration for Vercel Deployment
+ * Next.js 16 Configuration
+ * 
+ * Compatible with Vercel and Netlify deployments
  * 
  * IMPORTANT NOTES:
  * - Next.js 16 uses Turbopack by default (faster builds)
  * - ESLint config moved to separate .eslintrc or removed (handled by next lint)
  * - Webpack config replaced with Turbopack config if needed
- * - All settings optimized for Vercel's production environment
+ * - Image optimization works on both Vercel and Netlify
+ * - For Netlify: Use @netlify/plugin-nextjs plugin for best compatibility
  */
 const nextConfig: NextConfig = {
   // React strict mode for better development experience
   reactStrictMode: true,
 
-  // Image optimization settings for Vercel
+  // Image optimization settings (works on Vercel and Netlify)
   images: {
     // Allow images from external domains if needed
     remotePatterns: [
@@ -24,6 +27,9 @@ const nextConfig: NextConfig = {
     ],
     // Optimize images for better performance
     formats: ["image/avif", "image/webp"],
+    // For Netlify: Use loader if needed, otherwise Next.js handles it
+    // loader: "custom",
+    // loaderFile: "./lib/imageLoader.js",
   },
 
   // TypeScript configuration
@@ -32,8 +38,10 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
 
-  // Output configuration - Vercel handles this automatically
-  // No need to specify output for Vercel deployment
+  // Output configuration
+  // For static export: output: 'export'
+  // For SSR/SSG (Vercel/Netlify): Leave undefined (default)
+  // Netlify requires @netlify/plugin-nextjs for App Router support
 
   // Compiler options
   compiler: {

@@ -53,7 +53,7 @@ export default function ContactPage() {
               Submit the contact brief below and we will confirm a working session within one business day.
             </p>
             <div className="mt-4">
-              <ContactSalesModal />
+              <ContactSalesModal intent="sales" />
             </div>
           </div>
         </section>

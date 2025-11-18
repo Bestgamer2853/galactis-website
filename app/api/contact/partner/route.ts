@@ -7,7 +7,6 @@ const RATE_LIMIT = 10; // 10 submissions per hour
 const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour in milliseconds
 
 function getClientIP(req: NextRequest): string {
-  // Try various headers for client IP
   const forwarded = req.headers.get("x-forwarded-for");
   if (forwarded) {
     return forwarded.split(",")[0].trim();
@@ -16,7 +15,6 @@ function getClientIP(req: NextRequest): string {
   if (realIP) {
     return realIP;
   }
-  // Next.js 16 doesn't have req.ip, so return unknown if headers are missing
   return "unknown";
 }
 
@@ -25,16 +23,14 @@ function checkRateLimit(ip: string): boolean {
   const record = submissionCounts.get(ip);
 
   if (!record || now > record.resetTime) {
-    // Reset or create new record
     submissionCounts.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
     return true;
   }
 
   if (record.count >= RATE_LIMIT) {
-    return false; // Rate limit exceeded
+    return false;
   }
 
-  // Increment count
   record.count++;
   submissionCounts.set(ip, record);
   return true;
@@ -54,28 +50,19 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Determine intent (default to "sales" for backward compatibility)
-    const intent = body.intent || "sales";
-
-    // Validate required fields based on intent
-    if (intent === "sales") {
-      if (!body.name || !body.email || !body.company || !body.message) {
-        return NextResponse.json(
-          { ok: false, error: "Missing required fields" },
-          { status: 400 }
-        );
-      }
-    } else if (intent === "support") {
-      if (!body.name || !body.email || !body.issueCategory || !body.message) {
-        return NextResponse.json(
-          { ok: false, error: "Missing required fields" },
-          { status: 400 }
-        );
-      }
-    } else {
-      // Partner intent should use /api/contact/partner endpoint
+    // Validate required fields for partner form
+    if (
+      !body.intent ||
+      body.intent !== "partner" ||
+      !body.name ||
+      !body.email ||
+      !body.company ||
+      !body.partnerType ||
+      !body.regions ||
+      !body.businessSummary
+    ) {
       return NextResponse.json(
-        { ok: false, error: "Partner applications should use /api/contact/partner" },
+        { ok: false, error: "Missing required fields" },
         { status: 400 }
       );
     }
@@ -89,6 +76,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Validate partner type
+    const validPartnerTypes = ["Reseller", "Service Provider", "Consulting", "Build"];
+    if (!validPartnerTypes.includes(body.partnerType)) {
+      return NextResponse.json(
+        { ok: false, error: "Invalid partner type" },
+        { status: 400 }
+      );
+    }
+
     // Rate limiting
     const clientIP = getClientIP(req);
     if (!checkRateLimit(clientIP)) {
@@ -98,20 +94,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Determine source based on intent
-    const source = intent === "sales" ? "sales_inquiry" : intent === "support" ? "support_request" : body.source || "website";
-
-    // Submit to HubSpot
+    // Submit to HubSpot with partner-specific data
     try {
       const result = await submitToHubSpot({
         name: body.name,
         email: body.email,
-        company: body.company || "",
-        phone: body.phone || "",
-        message: intent === "support" 
-          ? `Support Request - Category: ${body.issueCategory}\nAccount ID: ${body.accountId || "N/A"}\nMessage: ${body.message}`
-          : body.message,
-        source: source,
+        company: body.company,
+        phone: "",
+        message: `Partner Application - Type: ${body.partnerType}\nRegions: ${body.regions}\nBusiness Summary: ${body.businessSummary}\nWebsite: ${body.website || "N/A"}\nAdditional Info: ${body.additionalInfo || "N/A"}`,
+        source: `partner_application_${body.partnerType.toLowerCase().replace(/\s+/g, "_")}`,
         timestamp: new Date().toISOString(),
       });
 
@@ -120,18 +111,19 @@ export async function POST(req: NextRequest) {
       }
 
       return NextResponse.json(
-        { ok: true, message: "Thank you! We'll contact you soon." },
+        { ok: true, message: "Thank you! Our partnerships team will contact you soon." },
         { status: 200 }
       );
     } catch (hubspotError) {
       console.error("HubSpot API error:", hubspotError);
+      // Return success to user even if HubSpot fails
       return NextResponse.json(
-        { ok: true, message: "Thank you! We'll contact you soon." },
+        { ok: true, message: "Thank you! Our partnerships team will contact you soon." },
         { status: 200 }
       );
     }
   } catch (e) {
-    console.error("Contact form error:", e);
+    console.error("Partner form error:", e);
     return NextResponse.json(
       { ok: false, error: "An error occurred. Please try again." },
       { status: 500 }

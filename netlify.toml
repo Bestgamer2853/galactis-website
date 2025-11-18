@@ -1,0 +1,91 @@
+# Netlify Configuration for Galactis.ai Website
+# Next.js 16 App Router with API Routes
+
+[build]
+  # Build command for Next.js
+  command = "npm run build"
+  
+  # Publish directory (Next.js plugin handles this automatically)
+  publish = ".next"
+
+[build.environment]
+  # Node.js version (must match package.json engines)
+  NODE_VERSION = "18.20.4"
+  # Use npm (as specified in package.json)
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# Netlify Next.js plugin (handles App Router, API routes, ISR, etc.)
+# Install via: npm install -D @netlify/plugin-nextjs
+# Or configure in Netlify UI: Site Settings > Build & Deploy > Plugins
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Redirect rules for Next.js routing
+[[redirects]]
+  # Redirect all API routes to Next.js functions
+  from = "/api/*"
+  to = "/.netlify/functions/__nextjs/:splat"
+  status = 200
+  force = true
+
+# Rewrite rules for Next.js
+[[redirects]]
+  # Handle all routes through Next.js
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers for security and performance
+[[headers]]
+  # Apply security headers to all pages
+  for = "/*"
+  [headers.values]
+    # Security headers
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    
+    # Performance headers
+    X-DNS-Prefetch-Control = "on"
+
+[[headers]]
+  # Optimize static assets
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  # Cache images
+  for = "/_next/image*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  # Cache Next.js static files
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  # Cache favicon and logo
+  for = "/*.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# Environment-specific configurations
+[context.production.environment]
+  NODE_ENV = "production"
+
+[context.deploy-preview.environment]
+  NODE_ENV = "production"
+
+[context.branch-deploy.environment]
+  NODE_ENV = "production"
+

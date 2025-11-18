@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ContactSalesModal from "@/components/ContactSalesModal";
 import Link from "next/link";
+import { trackEvent } from "@/lib/analytics";
 
 const bundleHighlights = [
   {
@@ -45,7 +46,20 @@ const assurances = [
   "Managed success pods align to your industry and region.",
 ];
 
-// Removed unused packContents array
+const pricingFaq = [
+  {
+    question: "How is Galactis pricing structured?",
+    answer: "Our pricing combines platform subscription fees with usage-based components (per asset monitored, per AI agent, per workflow). Volume discounts and annual commitments reduce overall costs. Enterprise deals typically start at $50K+ annually, tailored to your scale, compliance needs, and deployment model.",
+  },
+  {
+    question: "Why is pricing consultative rather than listed?",
+    answer: "Each deployment is unique—spanning multiple regions, compliance requirements (PCI-DSS, SOX, HIPAA), hosting preferences (multi-tenant, single-tenant, sovereign), and integration complexity. We co-design commercials to align with your KPIs, ROI targets, and procurement cycles.",
+  },
+  {
+    question: "Do you offer volume discounts or add-on services?",
+    answer: "Yes. Enterprise agreements include volume discounts for large asset footprints or agent deployments. Add-ons include professional services (integration, training, custom playbooks), premium support tiers (24/7, dedicated pods), and managed success programs. All options are outlined in your tailored proposal.",
+  },
+];
 
 export default function PricingPage() {
   return (
@@ -60,7 +74,10 @@ export default function PricingPage() {
                 Enterprise pricing is a conversation, not a calculator
               </h1>
               <p className="mt-4 text-base text-white/80">
-                Every Galactis deployment spans ITAM, network intelligence, and AI agents with compliance guardrails. We co-design commercials to match scope, hosting, and ROI expectations.
+                Every Galactis deployment spans ITAM, network intelligence, and AI agents with compliance guardrails. We co-design commercials to match scope, hosting, and ROI expectations. Pricing combines platform subscriptions with usage-based components; typical enterprise deals start at $50K+ annually, with volume discounts and flexible deployment options.
+              </p>
+              <p className="mt-3 text-sm text-white/70">
+                Why consultative? Each enterprise has unique requirements—multiple regions, specific compliance needs (PCI-DSS, SOX, HIPAA), deployment preferences (multi-tenant, single-tenant, sovereign), and integration complexity. We tailor pricing to align with your KPIs, ROI targets, and procurement cycles.
               </p>
               <ul className="mt-6 space-y-3 text-sm text-white/80">
                 <li>• 24-hour response from industry solution owners</li>
@@ -68,10 +85,19 @@ export default function PricingPage() {
                 <li>• Eight-week pilots with shared success dashboards</li>
               </ul>
               <div className="mt-8 flex flex-wrap gap-4">
-                <ContactSalesModal />
+                <button
+                  onClick={() => {
+                    trackEvent("pricing_hero_cta_clicked");
+                    const button = document.querySelector('[data-contact-trigger][data-intent="sales"]') as HTMLButtonElement;
+                    button?.click();
+                  }}
+                  className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-purple-900 shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl"
+                >
+                  Get a tailored proposal
+                </button>
                 <Link
                   href="/solutions/financial-services"
-                  className="rounded-md border border-white/40 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                  className="rounded-xl border border-white/40 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
                 >
                   View solution briefs
                 </Link>
@@ -96,7 +122,15 @@ export default function PricingPage() {
                   <dt className="text-white/60">Regions</dt>
                   <dd className="text-lg font-semibold text-white">NA · EU · APAC</dd>
                 </div>
+                <div>
+                  <dt className="text-white/60">Starting range</dt>
+                  <dd className="text-lg font-semibold text-white">$50K+ annually</dd>
+                </div>
               </dl>
+            </div>
+            {/* Hidden trigger for ContactSalesModal */}
+            <div className="hidden">
+              <ContactSalesModal intent="sales" />
             </div>
           </div>
         </section>
@@ -156,6 +190,12 @@ export default function PricingPage() {
                 </li>
               ))}
             </ul>
+            <div className="mt-6 rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-900/50">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-600 dark:text-zinc-400">Volume & Add-ons</p>
+              <p className="mt-2 text-sm text-zinc-700 dark:text-zinc-300">
+                Enterprise agreements include volume discounts for large deployments. Add-ons: professional services, premium support tiers (24/7, dedicated pods), and managed success programs. All options detailed in your tailored proposal.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -163,9 +203,9 @@ export default function PricingPage() {
           <div className="grid gap-6 md:grid-cols-[1.2fr,0.8fr]">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.35em] text-purple-900/70 dark:text-purple-200/80">Next step</p>
-              <h2 className="mt-3 text-2xl font-semibold text-purple-900 dark:text-purple-100">Ready for a bespoke proposal?</h2>
+              <h2 className="mt-3 text-2xl font-semibold text-purple-900 dark:text-purple-100">Ready for a tailored proposal?</h2>
               <p className="mt-3 text-sm text-purple-900/80 dark:text-purple-100/80">
-                Bring your KPIs, integrations, and compliance constraints. We’ll present a tailored commercial model and success plan in under a week.
+                Bring your KPIs, integrations, and compliance constraints. We'll present a tailored commercial model and success plan in under a week.
               </p>
             </div>
             <div className="rounded-2xl border border-white/50 bg-white/70 p-4 text-sm text-purple-900 shadow-sm dark:border-purple-800 dark:bg-purple-900/20 dark:text-purple-100">
@@ -179,7 +219,32 @@ export default function PricingPage() {
             </div>
           </div>
           <div className="mt-6">
-            <ContactSalesModal />
+            <button
+              onClick={() => {
+                trackEvent("pricing_final_cta_clicked");
+                const button = document.querySelector('[data-contact-trigger][data-intent="sales"]') as HTMLButtonElement;
+                button?.click();
+              }}
+              className="rounded-xl bg-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-purple-700 hover:shadow-xl"
+            >
+              Request pricing consultation
+            </button>
+          </div>
+          {/* Hidden trigger for ContactSalesModal */}
+          <div className="hidden">
+            <ContactSalesModal intent="sales" />
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-3xl border border-zinc-200 p-6 dark:border-zinc-800">
+          <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">Frequently asked questions</h2>
+          <div className="mt-6 space-y-6">
+            {pricingFaq.map((faq, index) => (
+              <div key={index} className="border-b border-zinc-200 pb-6 last:border-b-0 dark:border-zinc-800">
+                <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{faq.question}</h3>
+                <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{faq.answer}</p>
+              </div>
+            ))}
           </div>
         </section>
       </main>

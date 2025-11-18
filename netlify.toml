@@ -3,20 +3,18 @@
 
 [build]
   # Build command for Next.js
-  command = "npm run build"
+  command = "npm ci --legacy-peer-deps && npm run build"
   
-  # Publish directory (Next.js plugin handles this automatically)
+  # Publish directory for Next.js
   publish = ".next"
 
 [build.environment]
-  # Node.js version (must match package.json engines)
+  # Node.js version
   NODE_VERSION = "18.20.4"
-  # Use npm (as specified in package.json)
-  NPM_FLAGS = "--legacy-peer-deps"
+  # Ensure devDependencies are installed
+  NODE_ENV = "development"
 
 # Netlify Next.js plugin (handles App Router, API routes, ISR, etc.)
-# Install via: npm install -D @netlify/plugin-nextjs
-# Or configure in Netlify UI: Site Settings > Build & Deploy > Plugins
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
@@ -78,14 +76,4 @@
   for = "/*.svg"
   [headers.values]
     Cache-Control = "public, max-age=86400"
-
-# Environment-specific configurations
-[context.production.environment]
-  NODE_ENV = "production"
-
-[context.deploy-preview.environment]
-  NODE_ENV = "production"
-
-[context.branch-deploy.environment]
-  NODE_ENV = "production"
 

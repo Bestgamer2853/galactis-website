@@ -127,15 +127,15 @@ export default function MobileMenu() {
                       <Link
                         href="/"
                         onClick={handleLinkClick}
-                        className="flex items-center gap-1.5 text-zinc-900 dark:text-zinc-100"
+                        className="flex items-center gap-1 text-zinc-900 dark:text-zinc-100 overflow-visible"
                       >
                         <img 
                           src="/galactis-logo.svg" 
                           alt="Galactis.ai company logo, stylized geometric 'G' with blue-purple gradient" 
-                          className="h-8 w-auto flex-shrink-0"
-                          style={{ objectFit: "contain", display: "block", backgroundColor: "transparent" }}
+                          className="h-10 md:h-12 w-auto flex-shrink-0"
+                          style={{ display: "block", maxWidth: "none", objectFit: "contain" }}
                         />
-                        <span className="font-semibold">Galactis.ai</span>
+                        <span className="text-lg font-semibold leading-none">Galactis.ai</span>
                       </Link>
                       <Dialog.Close asChild>
                         <button

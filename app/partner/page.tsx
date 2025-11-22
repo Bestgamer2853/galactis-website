@@ -80,7 +80,6 @@ export default function PartnersPage() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-black">

@@ -291,4 +291,3 @@ export default function PartnersPage() {
   );
 }
 
-// Build fix: removed unused MessageCircle import

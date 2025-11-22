@@ -3,7 +3,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle, Users, Building2, Briefcase, Code, MessageCircle } from "lucide-react";
+import { ArrowRight, CheckCircle, Users, Building2, Briefcase, Code } from "lucide-react";
 import { useState, useEffect } from "react";
 import HubSpotPartnerModal from "@/components/HubSpotPartnerModal";
 import PartnerSuccessIllustration from "@/components/PartnerSuccessIllustration";

@@ -3,7 +3,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HubSpotContactModal from "@/components/HubSpotContactModal";
-import Link from "next/link";
 
 export default function CaseStudiesPage() {
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Menu, ChevronDown } from "lucide-react";
@@ -60,7 +60,6 @@ export default function MobileMenu() {
   const [productsOpen, setProductsOpen] = useState(false);
   const [solutionsOpen, setSolutionsOpen] = useState(false);
 
-  // Prevent body scroll when menu is open
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -85,15 +84,8 @@ export default function MobileMenu() {
           className="flex min-h-[44px] min-w-[44px] items-center justify-center p-2 text-zinc-700 transition-colors hover:text-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 md:hidden dark:text-zinc-300 dark:hover:text-purple-400"
           aria-label="Toggle menu"
         >
-          <motion.div
-            animate={open ? { rotate: 90 } : { rotate: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {open ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
+          <motion.div animate={open ? { rotate: 90 } : { rotate: 0 }} transition={{ duration: 0.3 }}>
+            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </motion.div>
         </button>
       </Dialog.Trigger>
@@ -102,7 +94,6 @@ export default function MobileMenu() {
         <AnimatePresence>
           {open && (
             <>
-              {/* Overlay */}
               <Dialog.Overlay asChild>
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -113,7 +104,6 @@ export default function MobileMenu() {
                 />
               </Dialog.Overlay>
 
-              {/* Menu Content */}
               <Dialog.Content asChild>
                 <motion.div
                   initial={{ x: "100%" }}
@@ -123,17 +113,16 @@ export default function MobileMenu() {
                   className="fixed right-0 top-0 z-50 h-full w-80 max-w-[85vw] bg-white shadow-2xl dark:bg-zinc-950"
                 >
                   <div className="flex h-full flex-col">
-                    {/* Header */}
                     <div className="flex items-center justify-between border-b border-zinc-200 p-4 dark:border-zinc-800">
                       <Link
                         href="/"
                         onClick={handleLinkClick}
                         className="flex items-center gap-1 text-zinc-900 dark:text-zinc-100 overflow-visible"
                       >
-                        <img 
-                          src="/galactis-logo.svg" 
-                          alt="Galactis.ai company logo, stylized geometric 'G' with blue-purple gradient" 
-                          className="h-10 md:h-12 w-auto flex-shrink-0"
+                        <img
+                          src="/galactis-logo.svg"
+                          alt="Galactis.ai company logo, stylized geometric 'G' with blue-purple gradient"
+                          className="h-10 w-auto flex-shrink-0 md:h-12"
                           style={{ display: "block", maxWidth: "none", objectFit: "contain" }}
                         />
                         <span className="text-lg font-semibold leading-none">Galactis.ai</span>
@@ -148,20 +137,15 @@ export default function MobileMenu() {
                       </Dialog.Close>
                     </div>
 
-                    {/* Navigation Items */}
                     <nav className="flex-1 overflow-y-auto p-4">
                       <div className="space-y-2">
-                        {/* Products Dropdown (Mobile) */}
                         <div>
                           <button
                             onClick={() => setProductsOpen(!productsOpen)}
                             className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-base font-medium text-zinc-900 transition-colors hover:bg-purple-50 dark:text-zinc-100 dark:hover:bg-purple-900/20"
                           >
                             <span>Products</span>
-                            <motion.div
-                              animate={{ rotate: productsOpen ? 180 : 0 }}
-                              transition={{ duration: 0.2 }}
-                            >
+                            <motion.div animate={{ rotate: productsOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
                               <ChevronDown className="h-5 w-5" />
                             </motion.div>
                           </button>
@@ -201,17 +185,13 @@ export default function MobileMenu() {
                           </AnimatePresence>
                         </div>
 
-                        {/* Solutions Dropdown (Mobile) */}
                         <div>
                           <button
                             onClick={() => setSolutionsOpen(!solutionsOpen)}
                             className="mt-2 flex w-full items-center justify-between rounded-lg px-4 py-3 text-base font-medium text-zinc-900 transition-colors hover:bg-purple-50 dark:text-zinc-100 dark:hover:bg-purple-900/20"
                           >
                             <span>Solutions</span>
-                            <motion.div
-                              animate={{ rotate: solutionsOpen ? 180 : 0 }}
-                              transition={{ duration: 0.2 }}
-                            >
+                            <motion.div animate={{ rotate: solutionsOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
                               <ChevronDown className="h-5 w-5" />
                             </motion.div>
                           </button>
@@ -251,7 +231,6 @@ export default function MobileMenu() {
                           </AnimatePresence>
                         </div>
 
-                        {/* Other Navigation Items */}
                         {navItems.map((item, index) => (
                           <motion.div
                             key={item.href}
@@ -275,10 +254,9 @@ export default function MobileMenu() {
                       </div>
                     </nav>
 
-                    {/* Footer Actions */}
                     <div className="border-t border-zinc-200 p-4 dark:border-zinc-800">
                       <div onClick={handleLinkClick}>
-                        <HubSpotContactModal 
+                        <HubSpotContactModal
                           variant="link"
                           triggerText="Contact Sales"
                           triggerClassName="block w-full rounded-md bg-purple-600 px-4 py-2 text-center text-sm font-semibold text-white transition-colors hover:bg-purple-700"

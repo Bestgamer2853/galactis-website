@@ -1,9 +1,15 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { trackEvent } from "@/lib/analytics";
-import { getPartnerFormUrl } from "@/lib/hubspotForms";
+import {
+  HUBSPOT_PARTNER_FORM_ID,
+  HUBSPOT_PORTAL_ID,
+  HUBSPOT_REGION,
+  getPartnerFormUrl,
+  loadHubSpotFormsScript,
+} from "@/lib/hubspotForms";
 
 declare global {
   interface Window {
@@ -14,6 +20,7 @@ declare global {
           portalId: string;
           formId: string;
           target: string;
+          onFormReady?: () => void;
         }) => void;
       };
     };
@@ -61,62 +68,75 @@ export default function HubSpotPartnerModal({
     );
   }
 
-  const [open, setOpen] = useState(false);
-  const [scriptLoaded, setScriptLoaded] = useState(false);
-  const [formRendered, setFormRendered] = useState(false);
-  const formContainerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const formContainerId = useId();
+  const [open, setOpen] = useState(false);
+  const [formRendered, setFormRendered] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const region = process.env.NEXT_PUBLIC_HUBSPOT_REGION?.trim()?.toLowerCase();
-    const customScriptHost = process.env.NEXT_PUBLIC_HUBSPOT_EMBED_HOST?.trim();
-    const scriptHost = customScriptHost || (region === "eu1" ? "https://js-eu1.hsforms.net" : "https://js.hsforms.net");
-    const scriptSrc = `${scriptHost}/forms/embed/v2.js`;
-
-    const existingScript = document.querySelector(`script[src="${scriptSrc}"]`);
-
-    if (existingScript) {
-      setScriptLoaded(true);
+  const renderForm = useCallback(() => {
+    const target = containerRef.current;
+    if (!target) {
       return;
     }
 
-    const script = document.createElement("script");
-    script.src = scriptSrc;
-    script.async = true;
-    script.onload = () => setScriptLoaded(true);
-    document.body.appendChild(script);
-  }, []);
+    target.innerHTML = "";
+    target.id = formContainerId;
+
+    if (!window.hbspt?.forms?.create) {
+      setLoadError("HubSpot is unavailable. Please try again later.");
+      return;
+    }
+
+    window.hbspt.forms.create({
+      region: HUBSPOT_REGION,
+      portalId: HUBSPOT_PORTAL_ID,
+      formId: HUBSPOT_PARTNER_FORM_ID,
+      target: `#${formContainerId}`,
+      onFormReady: () => setFormRendered(true),
+    });
+  }, [formContainerId]);
 
   useEffect(() => {
-    if (open && scriptLoaded && !formRendered && formContainerRef.current) {
-      const portalId = process.env.NEXT_PUBLIC_HUBSPOT_PORTAL_ID || "244419566";
-      const formId = "9b765ab9-0e57-4011-aadc-e105e079e141";
-      const region = process.env.NEXT_PUBLIC_HUBSPOT_REGION?.trim() || "na1";
-
-      if (typeof window !== "undefined" && window.hbspt?.forms) {
-        window.hbspt.forms.create({
-          region,
-          portalId,
-          formId,
-          target: `#${formContainerId}`,
-        });
-        setFormRendered(true);
-      }
-
-      trackEvent("partner_modal_opened", {
-        source: "hubspot_form",
-        partnerType,
-      });
+    if (!open) {
+      return;
     }
-  }, [open, scriptLoaded, formRendered, partnerType, formContainerId]);
+
+    let cancelled = false;
+    setFormRendered(false);
+    setLoadError(null);
+
+    loadHubSpotFormsScript()
+      .then(() => {
+        if (cancelled) {
+          return;
+        }
+        renderForm();
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setLoadError("Unable to load HubSpot. Please try again or use the direct form link.");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+      if (containerRef.current) {
+        containerRef.current.innerHTML = "";
+      }
+    };
+  }, [open, renderForm]);
 
   return (
     <Dialog.Root
       open={open}
       onOpenChange={(value) => {
         setOpen(value);
-        if (!value) {
-          setFormRendered(false);
+        if (value) {
+          trackEvent("partner_clicked", {
+            source: "hubspot_modal",
+            partnerType,
+          });
         }
       }}
     >
@@ -126,12 +146,6 @@ export default function HubSpotPartnerModal({
           data-intent="partner"
           data-partner-type={partnerType}
           className={triggerClassName}
-          onClick={() =>
-            trackEvent("partner_clicked", {
-              source: "hubspot_modal",
-              partnerType,
-            })
-          }
         >
           {triggerText}
         </button>
@@ -160,15 +174,29 @@ export default function HubSpotPartnerModal({
           </div>
 
           <div className="hubspot-form-wrapper">
-            {open && !formRendered && (
+            {open && !formRendered && !loadError && (
               <div className="flex items-center justify-center py-12">
                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600" />
               </div>
             )}
-            <div ref={formContainerRef} id={formContainerId} className="hs-form-frame" />
+            {loadError && (
+              <div className="space-y-4 rounded-xl border border-rose-100 bg-rose-50 p-4 text-sm text-rose-700 dark:border-rose-900/40 dark:bg-rose-900/10 dark:text-rose-200">
+                <p>{loadError}</p>
+                <a
+                  href={hubspotUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-purple-600 underline-offset-2 hover:underline"
+                >
+                  Open the HubSpot form in a new tab
+                </a>
+              </div>
+            )}
+            <div ref={containerRef} className="hs-form-frame" />
           </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
   );
 }
+

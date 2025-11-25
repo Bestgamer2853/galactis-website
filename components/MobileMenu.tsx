@@ -279,6 +279,7 @@ export default function MobileMenu() {
                     <div className="border-t border-zinc-200 p-4 dark:border-zinc-800">
                       <div onClick={handleLinkClick}>
                         <HubSpotContactModal 
+                          variant="link"
                           triggerText="Contact Sales"
                           triggerClassName="block w-full rounded-md bg-purple-600 px-4 py-2 text-center text-sm font-semibold text-white transition-colors hover:bg-purple-700"
                         />

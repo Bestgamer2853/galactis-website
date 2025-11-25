@@ -216,12 +216,6 @@ export default function AboutPage() {
                     </div>
                     
                     <div className="relative z-10">
-                      {/* Badge */}
-                      <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-700 dark:border-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
-                        <Sparkles className="h-3 w-3" />
-                        {leader.badge}
-                      </div>
-                      
                       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-600 dark:text-purple-400">
                         {leader.title}
                       </p>
@@ -256,10 +250,6 @@ export default function AboutPage() {
                     </div>
                     
                     <div className="relative z-10">
-                      <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-700 dark:border-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
-                        <Sparkles className="h-3 w-3" />
-                        {leader.badge}
-            </div>
                       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-600 dark:text-purple-400">
                         {leader.title}
                       </p>

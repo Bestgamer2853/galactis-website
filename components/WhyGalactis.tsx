@@ -8,7 +8,7 @@ import { ScrollRevealStagger } from "./ScrollReveal";
 const reasons = [
   {
     icon: Layers,
-    title: "Single operating system for ITAM, NOC, and AI agents",
+    title: "Single platform for ITAM, NOC, and AI agents",
     description:
       "Inventory, contracts, telemetry, and agent automation share the same data fabric, so CIO, COO, and CTO teams finally work from one plan of record.",
     proof: ["₹2.8 Cr average waste eliminated", "220+ systems bi-directionally synced"],

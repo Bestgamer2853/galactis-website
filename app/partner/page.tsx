@@ -3,7 +3,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
-// Fixed: Removed unused MessageCircle import
 import { ArrowRight, CheckCircle, Users, Building2, Briefcase, Code } from "lucide-react";
 import { useState, useEffect } from "react";
 import HubSpotPartnerModal from "@/components/HubSpotPartnerModal";

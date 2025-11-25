@@ -27,9 +27,7 @@ export default function HubSpotPartnerModal({
 
   // Preload HubSpot script on component mount for instant form display
   useEffect(() => {
-    const portalId = process.env.NEXT_PUBLIC_HUBSPOT_PORTAL_ID || "244419566";
-    const region = process.env.NEXT_PUBLIC_HUBSPOT_REGION || "na2";
-    const scriptSrc = `https://js-${region}.hsforms.net/forms/embed/${portalId}.js`;
+    const scriptSrc = "https://js.hsforms.net/forms/v2.js";
     
     // Check if script already exists
     const existingScript = document.querySelector(`script[src="${scriptSrc}"]`);
@@ -71,6 +69,14 @@ export default function HubSpotPartnerModal({
         source: "hubspot_form",
         partnerType: partnerType 
       });
+    }
+
+    // Reset form when modal closes
+    if (!open && formRendered) {
+      if (formContainerRef.current) {
+        formContainerRef.current.innerHTML = '';
+      }
+      setFormRendered(false);
     }
   }, [open, scriptLoaded, formRendered, partnerType]);
 

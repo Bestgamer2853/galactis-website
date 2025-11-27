@@ -76,16 +76,7 @@ export const metadata: Metadata = {
     site: "@galactis_ai",
     creator: "@galactis_ai",
   },
-  icons: {
-    icon: [
-      { url: "/galactis-logo.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "32x32" },
-    ],
-    apple: [
-      { url: "/galactis-logo.svg", type: "image/svg+xml" },
-    ],
-    shortcut: "/galactis-logo.svg",
-  },
+  // Icons are auto-generated from app/icon.tsx and app/apple-icon.tsx
 };
 
 export const viewport: Viewport = {

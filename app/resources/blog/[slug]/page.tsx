@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
@@ -123,11 +122,6 @@ export default async function BlogPostPage({ params }: Props) {
 
         {/* Article Header */}
         <header className="mb-12">
-          {post.category && (
-            <span className="mb-4 inline-block rounded-full bg-purple-100 px-3 py-1 text-sm font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
-              {post.category}
-            </span>
-          )}
           <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-5xl">
             {post.title}
           </h1>
@@ -136,51 +130,12 @@ export default async function BlogPostPage({ params }: Props) {
           </p>
 
           {/* Meta info */}
-          <div className="mt-8 flex flex-wrap items-center gap-6 border-y border-zinc-200 py-4 dark:border-zinc-800">
-            {post.author && (
-              <div className="flex items-center gap-3">
-                {post.author.picture?.url && (
-                  <Image
-                    src={post.author.picture.url}
-                    alt={post.author.name}
-                    width={48}
-                    height={48}
-                    className="rounded-full"
-                  />
-                )}
-                <div>
-                  <p className="font-medium text-zinc-900 dark:text-zinc-100">
-                    {post.author.name}
-                  </p>
-                  {post.author.title && (
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                      {post.author.title}
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-            <div className="flex items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">
-              <time>{formatPostDate(post.publishedDate)}</time>
-              <span>·</span>
-              <span>{readTime} min read</span>
-            </div>
+          <div className="mt-8 flex items-center gap-4 border-y border-zinc-200 py-4 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+            <time>{formatPostDate(post.publishedDate)}</time>
+            <span>·</span>
+            <span>{readTime} min read</span>
           </div>
         </header>
-
-        {/* Cover Image */}
-        {post.coverImage && (
-          <figure className="mb-12 overflow-hidden rounded-2xl">
-            <Image
-              src={post.coverImage.url}
-              alt={post.title}
-              width={post.coverImage.width || 1200}
-              height={post.coverImage.height || 630}
-              className="w-full object-cover"
-              priority
-            />
-          </figure>
-        )}
 
         {/* Article Content */}
         <article className="prose prose-lg prose-zinc mx-auto dark:prose-invert prose-headings:font-bold prose-a:text-purple-600 prose-a:no-underline hover:prose-a:underline dark:prose-a:text-purple-400">
@@ -191,25 +146,6 @@ export default async function BlogPostPage({ params }: Props) {
             <div className="whitespace-pre-wrap">{post.content}</div>
           )}
         </article>
-
-        {/* Tags */}
-        {post.tags && post.tags.length > 0 && (
-          <div className="mt-12 border-t border-zinc-200 pt-8 dark:border-zinc-800">
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-              Tags
-            </h3>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-zinc-100 px-3 py-1 text-sm text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Back to Blog */}
         <div className="mt-12 border-t border-zinc-200 pt-8 dark:border-zinc-800">

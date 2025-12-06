@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: post.title,
       description: post.excerpt,
       type: "article",
-      publishedTime: post.publishedAt,
+      publishedTime: post.publishedDate,
     },
   };
 }
@@ -66,8 +66,8 @@ export default async function BlogPostPage({ params }: Props) {
     "@type": "Article",
     headline: post.title,
     description: post.excerpt,
-    datePublished: post.publishedAt,
-    dateModified: post.updatedAt || post.publishedAt,
+    datePublished: post.publishedDate,
+    dateModified: post.updatedAt || post.publishedDate,
     author: {
       "@type": "Organization",
       name: "Galactis.ai",
@@ -86,6 +86,7 @@ export default async function BlogPostPage({ params }: Props) {
     },
     wordCount: post.content?.split(/\s+/).length || 0,
     articleSection: "Technology",
+    ...(post.coverImage?.url && { image: post.coverImage.url }),
   };
 
   return (
@@ -160,7 +161,7 @@ export default async function BlogPostPage({ params }: Props) {
               </div>
             )}
             <div className="flex items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">
-              <time>{formatPostDate(post.publishedAt)}</time>
+              <time>{formatPostDate(post.publishedDate)}</time>
               <span>·</span>
               <span>{readTime} min read</span>
             </div>

@@ -38,7 +38,7 @@ export default async function sitemap() {
     const posts = await getAllPosts(100);
     blogPages = posts.map((post) => ({
       url: `${BASE_URL}/resources/blog/${post.slug}`,
-      lastModified: new Date(post.publishedAt),
+      lastModified: new Date(post.publishedDate),
       priority: 0.7,
       changeFrequency: "monthly",
     }));

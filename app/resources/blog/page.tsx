@@ -22,8 +22,7 @@ const fallbackPosts = [
     slug: "five-pillars-technology-value-optimization",
     excerpt:
       "How CIOs align IT spend with business outcomes using continuous benchmarking and AI-driven insights.",
-    publishedAt: "2025-10-15",
-    category: "Strategy",
+    publishedDate: "2025-10-15",
   },
   {
     id: "2",
@@ -31,8 +30,7 @@ const fallbackPosts = [
     slug: "architecting-agentic-workflows",
     excerpt:
       "Design patterns for orchestrating AI agents with human approvals, compliance guardrails, and audit trails.",
-    publishedAt: "2025-09-22",
-    category: "Engineering",
+    publishedDate: "2025-09-22",
   },
   {
     id: "3",
@@ -40,8 +38,7 @@ const fallbackPosts = [
     slug: "closing-loop-network-automation",
     excerpt:
       "Implementing observability-driven runbooks that repair incidents autonomously and capture learning back into the platform.",
-    publishedAt: "2025-08-10",
-    category: "Product",
+    publishedDate: "2025-08-10",
   },
 ];
 
@@ -68,7 +65,7 @@ function BlogCard({ post }: { post: BlogPost | (typeof fallbackPosts)[0] }) {
             </span>
           )}
           <time className="text-zinc-500 dark:text-zinc-400">
-            {formatPostDate(post.publishedAt)}
+            {formatPostDate(post.publishedDate)}
           </time>
         </div>
         <h2 className="mt-4 text-xl font-semibold text-zinc-900 transition-colors group-hover:text-purple-600 dark:text-zinc-100 dark:group-hover:text-purple-400">
@@ -146,7 +143,7 @@ export default async function BlogPage() {
       "@type": "BlogPosting",
       headline: post.title,
       description: post.excerpt,
-      datePublished: post.publishedAt,
+      datePublished: post.publishedDate,
       url: `https://galactis.ai/resources/blog/${post.slug}`,
       ...("coverImage" in post && post.coverImage?.url
         ? { image: post.coverImage.url }

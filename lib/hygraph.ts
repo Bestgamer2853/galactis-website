@@ -40,17 +40,13 @@ export interface BlogPost {
   slug: string;
   excerpt: string;
   content?: string;
-  publishedAt: string;
+  publishedDate: string;
   updatedAt?: string;
-  // Optional fields - add these to your Hygraph schema if needed
   coverImage?: {
     url: string;
     width?: number;
     height?: number;
   };
-  author?: Author;
-  category?: string;
-  tags?: string[];
 }
 
 export interface BlogPostsResponse {
@@ -72,7 +68,10 @@ export const GET_ALL_POSTS = `
       title
       slug
       excerpt
-      publishedAt
+      publishedDate
+      coverImage {
+        url
+      }
     }
   }
 `;
@@ -85,8 +84,13 @@ export const GET_POST_BY_SLUG = `
       slug
       excerpt
       content
-      publishedAt
+      publishedDate
       updatedAt
+      coverImage {
+        url
+        width
+        height
+      }
     }
   }
 `;

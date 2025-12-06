@@ -39,10 +39,10 @@ export interface BlogPost {
   title: string;
   slug: string;
   excerpt: string;
-  content: {
-    html: string;
-    text?: string;
-  };
+  content?: string;
+  publishedAt: string;
+  updatedAt?: string;
+  // Optional fields - add these to your Hygraph schema if needed
   coverImage?: {
     url: string;
     width?: number;
@@ -51,12 +51,6 @@ export interface BlogPost {
   author?: Author;
   category?: string;
   tags?: string[];
-  publishedAt: string;
-  updatedAt?: string;
-  seo?: {
-    title?: string;
-    description?: string;
-  };
 }
 
 export interface BlogPostsResponse {
@@ -72,28 +66,13 @@ export interface SinglePostResponse {
 // ============================================
 
 export const GET_ALL_POSTS = `
-  query GetAllPosts($first: Int, $skip: Int, $orderBy: PostOrderByInput) {
-    posts(first: $first, skip: $skip, orderBy: $orderBy, stage: PUBLISHED) {
+  query GetAllPosts($first: Int, $skip: Int) {
+    posts(first: $first, skip: $skip, stage: PUBLISHED) {
       id
       title
       slug
       excerpt
-      category
-      tags
       publishedAt
-      coverImage {
-        url
-        width
-        height
-      }
-      author {
-        id
-        name
-        title
-        picture {
-          url
-        }
-      }
     }
   }
 `;
@@ -105,31 +84,9 @@ export const GET_POST_BY_SLUG = `
       title
       slug
       excerpt
-      content {
-        html
-        text
-      }
-      category
-      tags
+      content
       publishedAt
       updatedAt
-      coverImage {
-        url
-        width
-        height
-      }
-      author {
-        id
-        name
-        title
-        picture {
-          url
-        }
-      }
-      seo {
-        title
-        description
-      }
     }
   }
 `;
@@ -138,49 +95,6 @@ export const GET_ALL_SLUGS = `
   query GetAllSlugs {
     posts(stage: PUBLISHED) {
       slug
-    }
-  }
-`;
-
-export const GET_POSTS_BY_CATEGORY = `
-  query GetPostsByCategory($category: String!, $first: Int) {
-    posts(where: { category: $category }, first: $first, stage: PUBLISHED) {
-      id
-      title
-      slug
-      excerpt
-      category
-      publishedAt
-      coverImage {
-        url
-      }
-      author {
-        name
-      }
-    }
-  }
-`;
-
-export const GET_FEATURED_POSTS = `
-  query GetFeaturedPosts($first: Int) {
-    posts(where: { featured: true }, first: $first, orderBy: publishedAt_DESC, stage: PUBLISHED) {
-      id
-      title
-      slug
-      excerpt
-      category
-      publishedAt
-      coverImage {
-        url
-        width
-        height
-      }
-      author {
-        name
-        picture {
-          url
-        }
-      }
     }
   }
 `;
@@ -200,7 +114,6 @@ export async function getAllPosts(
     const data = await hygraphClient.request<BlogPostsResponse>(GET_ALL_POSTS, {
       first,
       skip,
-      orderBy: "publishedAt_DESC",
     });
     return data.posts;
   } catch (error) {
@@ -240,40 +153,6 @@ export async function getAllPostSlugs(): Promise<string[]> {
   }
 }
 
-/**
- * Fetch posts by category
- */
-export async function getPostsByCategory(
-  category: string,
-  first: number = 10
-): Promise<BlogPost[]> {
-  try {
-    const data = await hygraphClient.request<BlogPostsResponse>(
-      GET_POSTS_BY_CATEGORY,
-      { category, first }
-    );
-    return data.posts;
-  } catch (error) {
-    console.error("Error fetching posts by category:", error);
-    return [];
-  }
-}
-
-/**
- * Fetch featured posts
- */
-export async function getFeaturedPosts(first: number = 3): Promise<BlogPost[]> {
-  try {
-    const data = await hygraphClient.request<BlogPostsResponse>(
-      GET_FEATURED_POSTS,
-      { first }
-    );
-    return data.posts;
-  } catch (error) {
-    console.error("Error fetching featured posts:", error);
-    return [];
-  }
-}
 
 // ============================================
 // MUTATION QUERIES (for creating/updating content)

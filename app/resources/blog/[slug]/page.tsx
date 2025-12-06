@@ -34,22 +34,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: post.seo?.title || `${post.title} | Galactis.ai Blog`,
-    description: post.seo?.description || post.excerpt,
+    title: `${post.title} | Galactis.ai Blog`,
+    description: post.excerpt,
     openGraph: {
       title: post.title,
       description: post.excerpt,
       type: "article",
       publishedTime: post.publishedAt,
-      ...(post.coverImage && {
-        images: [
-          {
-            url: post.coverImage.url,
-            width: post.coverImage.width,
-            height: post.coverImage.height,
-          },
-        ],
-      }),
     },
   };
 }
@@ -65,8 +56,8 @@ export default async function BlogPostPage({ params }: Props) {
     notFound();
   }
 
-  const readTime = post.content?.text
-    ? calculateReadTime(post.content.text)
+  const readTime = post.content
+    ? calculateReadTime(post.content)
     : 5;
 
   // Structured data for SEO (Article schema)
@@ -75,19 +66,12 @@ export default async function BlogPostPage({ params }: Props) {
     "@type": "Article",
     headline: post.title,
     description: post.excerpt,
-    image: post.coverImage?.url,
     datePublished: post.publishedAt,
     dateModified: post.updatedAt || post.publishedAt,
-    author: post.author
-      ? {
-          "@type": "Person",
-          name: post.author.name,
-          ...(post.author.title && { jobTitle: post.author.title }),
-        }
-      : {
-          "@type": "Organization",
-          name: "Galactis.ai",
-        },
+    author: {
+      "@type": "Organization",
+      name: "Galactis.ai",
+    },
     publisher: {
       "@type": "Organization",
       name: "Galactis.ai",
@@ -100,9 +84,8 @@ export default async function BlogPostPage({ params }: Props) {
       "@type": "WebPage",
       "@id": `https://galactis.ai/resources/blog/${post.slug}`,
     },
-    wordCount: post.content?.text?.split(/\s+/).length || 0,
-    articleSection: post.category || "Technology",
-    keywords: post.tags?.join(", ") || "",
+    wordCount: post.content?.split(/\s+/).length || 0,
+    articleSection: "Technology",
   };
 
   return (
@@ -199,10 +182,14 @@ export default async function BlogPostPage({ params }: Props) {
         )}
 
         {/* Article Content */}
-        <article
-          className="prose prose-lg prose-zinc mx-auto dark:prose-invert prose-headings:font-bold prose-a:text-purple-600 prose-a:no-underline hover:prose-a:underline dark:prose-a:text-purple-400"
-          dangerouslySetInnerHTML={{ __html: post.content?.html || "" }}
-        />
+        <article className="prose prose-lg prose-zinc mx-auto dark:prose-invert prose-headings:font-bold prose-a:text-purple-600 prose-a:no-underline hover:prose-a:underline dark:prose-a:text-purple-400">
+          {/* Render content - supports HTML or plain text */}
+          {post.content?.includes("<") ? (
+            <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          ) : (
+            <div className="whitespace-pre-wrap">{post.content}</div>
+          )}
+        </article>
 
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (

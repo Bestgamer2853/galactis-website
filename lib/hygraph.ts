@@ -1,20 +1,16 @@
 import { GraphQLClient } from "graphql-request";
 
 // Initialize the GraphQL client for reading content (CDN endpoint)
+// CDN endpoint is for public read access - no auth token needed
 const hygraphEndpoint = process.env.HYGRAPH_ENDPOINT || "";
 
+// Read-only client (no auth needed for published content on CDN)
+export const hygraphClient = new GraphQLClient(hygraphEndpoint);
+
 // Mutation endpoint (non-CDN, requires auth token)
-// Format: https://api-ap-south-1.hygraph.com/v2/PROJECT_ID/master
+// Only used if you need to create/update content from the server
 const hygraphMutationEndpoint = process.env.HYGRAPH_MUTATION_ENDPOINT || 
   hygraphEndpoint.replace('.cdn.hygraph.com/content/', '.hygraph.com/v2/');
-
-export const hygraphClient = new GraphQLClient(hygraphEndpoint, {
-  headers: {
-    ...(process.env.HYGRAPH_TOKEN && {
-      Authorization: `Bearer ${process.env.HYGRAPH_TOKEN}`,
-    }),
-  },
-});
 
 // Authenticated client for mutations (creating/updating content)
 export const hygraphMutationClient = new GraphQLClient(hygraphMutationEndpoint, {

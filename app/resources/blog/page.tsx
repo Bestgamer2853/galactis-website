@@ -2,7 +2,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import Link from "next/link";
-import Image from "next/image";
 import { getAllPosts, formatPostDate, BlogPost } from "@/lib/hygraph";
 
 export const metadata = {
@@ -15,7 +14,7 @@ export const metadata = {
 export const revalidate = 3600;
 
 // Fallback posts for when Hygraph is not configured
-const fallbackPosts = [
+const fallbackPosts: BlogPost[] = [
   {
     id: "1",
     title: "The Five Essential Pillars of Technology Value Optimization",
@@ -42,54 +41,19 @@ const fallbackPosts = [
   },
 ];
 
-function BlogCard({ post }: { post: BlogPost | (typeof fallbackPosts)[0] }) {
-  const hasImage = "coverImage" in post && post.coverImage?.url;
-
+function BlogCard({ post }: { post: BlogPost }) {
   return (
     <article className="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-all hover:border-purple-300 hover:shadow-lg dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-purple-700">
-      {hasImage && (
-        <div className="relative aspect-[16/9] overflow-hidden">
-          <Image
-            src={(post as BlogPost).coverImage!.url}
-            alt={post.title}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-      )}
       <div className="p-6">
-        <div className="flex items-center gap-3 text-xs">
-          {"category" in post && post.category && (
-            <span className="rounded-full bg-purple-100 px-2.5 py-1 font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
-              {post.category}
-            </span>
-          )}
-          <time className="text-zinc-500 dark:text-zinc-400">
-            {formatPostDate(post.publishedDate)}
-          </time>
-        </div>
-        <h2 className="mt-4 text-xl font-semibold text-zinc-900 transition-colors group-hover:text-purple-600 dark:text-zinc-100 dark:group-hover:text-purple-400">
+        <time className="text-xs text-zinc-500 dark:text-zinc-400">
+          {formatPostDate(post.publishedDate)}
+        </time>
+        <h2 className="mt-3 text-xl font-semibold text-zinc-900 transition-colors group-hover:text-purple-600 dark:text-zinc-100 dark:group-hover:text-purple-400">
           {post.title}
         </h2>
         <p className="mt-2 line-clamp-2 text-sm text-zinc-600 dark:text-zinc-400">
           {post.excerpt}
         </p>
-        {"author" in post && post.author && (
-          <div className="mt-4 flex items-center gap-2">
-            {post.author.picture?.url && (
-              <Image
-                src={post.author.picture.url}
-                alt={post.author.name}
-                width={32}
-                height={32}
-                className="rounded-full"
-              />
-            )}
-            <span className="text-sm text-zinc-600 dark:text-zinc-400">
-              {post.author.name}
-            </span>
-          </div>
-        )}
         <Link
           href={`/resources/blog/${post.slug}`}
           className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-purple-600 transition-colors hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
@@ -120,7 +84,7 @@ export default async function BlogPage() {
 
   // Use fallback if no posts returned (Hygraph not configured)
   if (posts.length === 0) {
-    posts = fallbackPosts as unknown as BlogPost[];
+    posts = fallbackPosts;
   }
 
   // Structured data for blog listing (improves SEO)
@@ -145,9 +109,6 @@ export default async function BlogPage() {
       description: post.excerpt,
       datePublished: post.publishedDate,
       url: `https://galactis.ai/resources/blog/${post.slug}`,
-      ...("coverImage" in post && post.coverImage?.url
-        ? { image: post.coverImage.url }
-        : {}),
     })),
   };
 

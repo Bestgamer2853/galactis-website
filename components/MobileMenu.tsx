@@ -8,6 +8,7 @@ import { X, Menu, ChevronDown } from "lucide-react";
 import HubSpotContactModal from "./HubSpotContactModal";
 
 const navItems = [
+  { label: "Blog", href: "/resources/blog" },
   { label: "Partners", href: "/partner" },
   { label: "Careers", href: "/company/careers" },
   { label: "Company", href: "/company/about" },

@@ -82,8 +82,19 @@ export default async function BlogPage() {
   // Fetch posts from Hygraph
   let posts = await getAllPosts(12);
 
+  // Debug: Log what we got
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[Blog Page] Fetched ${posts.length} posts from Hygraph`);
+    if (posts.length > 0) {
+      console.log(`[Blog Page] Post titles:`, posts.map((p) => p.title));
+    } else {
+      console.warn("[Blog Page] No posts from Hygraph - check if endpoint is configured");
+    }
+  }
+
   // Use fallback if no posts returned (Hygraph not configured)
   if (posts.length === 0) {
+    console.warn("[Blog Page] Using fallback posts - Hygraph posts not available");
     posts = fallbackPosts;
   }
 

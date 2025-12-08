@@ -5,21 +5,26 @@ import { GraphQLClient } from "graphql-request";
 const hygraphEndpoint = process.env.HYGRAPH_ENDPOINT || "";
 
 // Read-only client (no auth needed for published content on CDN)
-export const hygraphClient = new GraphQLClient(hygraphEndpoint);
+// Only create client if endpoint is configured
+export const hygraphClient: GraphQLClient | null = hygraphEndpoint 
+  ? new GraphQLClient(hygraphEndpoint)
+  : null;
 
 // Mutation endpoint (non-CDN, requires auth token)
 // Only used if you need to create/update content from the server
 const hygraphMutationEndpoint = process.env.HYGRAPH_MUTATION_ENDPOINT || 
-  hygraphEndpoint.replace('.cdn.hygraph.com/content/', '.hygraph.com/v2/');
+  (hygraphEndpoint ? hygraphEndpoint.replace('.cdn.hygraph.com/content/', '.hygraph.com/v2/') : '');
 
 // Authenticated client for mutations (creating/updating content)
-export const hygraphMutationClient = new GraphQLClient(hygraphMutationEndpoint, {
-  headers: {
-    ...(process.env.HYGRAPH_TOKEN && {
-      Authorization: `Bearer ${process.env.HYGRAPH_TOKEN}`,
-    }),
-  },
-});
+export const hygraphMutationClient: GraphQLClient | null = hygraphMutationEndpoint
+  ? new GraphQLClient(hygraphMutationEndpoint, {
+      headers: {
+        ...(process.env.HYGRAPH_TOKEN && {
+          Authorization: `Bearer ${process.env.HYGRAPH_TOKEN}`,
+        }),
+      },
+    })
+  : null;
 
 // ============================================
 // TYPE DEFINITIONS
@@ -44,8 +49,6 @@ export interface BlogPost {
   updatedAt?: string;
   coverImage?: {
     url: string;
-    width?: number;
-    height?: number;
   };
 }
 
@@ -69,9 +72,6 @@ export const GET_ALL_POSTS = `
       slug
       excerpt
       publishedDate
-      coverImage {
-        url
-      }
     }
   }
 `;
@@ -86,11 +86,6 @@ export const GET_POST_BY_SLUG = `
       content
       publishedDate
       updatedAt
-      coverImage {
-        url
-        width
-        height
-      }
     }
   }
 `;
@@ -114,14 +109,25 @@ export async function getAllPosts(
   first: number = 10,
   skip: number = 0
 ): Promise<BlogPost[]> {
+  if (!hygraphClient) {
+    console.warn("Hygraph endpoint not configured. Returning empty posts array.");
+    return [];
+  }
   try {
     const data = await hygraphClient.request<BlogPostsResponse>(GET_ALL_POSTS, {
       first,
       skip,
     });
-    return data.posts;
+    const posts = data.posts || [];
+    if (posts.length > 0) {
+      console.log(`✅ Successfully fetched ${posts.length} posts from Hygraph`);
+    }
+    return posts;
   } catch (error) {
-    console.error("Error fetching posts:", error);
+    console.error("❌ Error fetching posts from Hygraph:", error);
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+    }
     return [];
   }
 }
@@ -130,12 +136,27 @@ export async function getAllPosts(
  * Fetch a single post by slug
  */
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
+  if (!hygraphClient) {
+    console.warn("Hygraph endpoint not configured. Cannot fetch post.");
+    return null;
+  }
   try {
     const data = await hygraphClient.request<SinglePostResponse>(
       GET_POST_BY_SLUG,
       { slug }
     );
-    return data.post;
+    const post = data.post || null;
+    
+    // Debug: Log cover image info in development
+    if (post && process.env.NODE_ENV === "development") {
+      if (post.coverImage?.url) {
+        console.log(`[Blog Post "${post.title}"] Cover image URL:`, post.coverImage.url);
+      } else {
+        console.warn(`[Blog Post "${post.title}"] No cover image URL - image may not be linked in Hygraph`);
+      }
+    }
+    
+    return post;
   } catch (error) {
     console.error("Error fetching post:", error);
     return null;
@@ -146,11 +167,15 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
  * Get all post slugs for static generation
  */
 export async function getAllPostSlugs(): Promise<string[]> {
+  if (!hygraphClient) {
+    console.warn("Hygraph endpoint not configured. Returning empty slugs array.");
+    return [];
+  }
   try {
     const data = await hygraphClient.request<{ posts: { slug: string }[] }>(
       GET_ALL_SLUGS
     );
-    return data.posts.map((post) => post.slug);
+    return (data.posts || []).map((post) => post.slug);
   } catch (error) {
     console.error("Error fetching slugs:", error);
     return [];
@@ -220,6 +245,9 @@ export interface CreatePostInput {
  * Create a new blog post (draft)
  */
 export async function createPost(data: CreatePostInput): Promise<{ id: string; title: string; slug: string } | null> {
+  if (!hygraphMutationClient) {
+    throw new Error("Hygraph mutation endpoint not configured. Cannot create post.");
+  }
   try {
     const result = await hygraphMutationClient.request<{
       createPost: { id: string; title: string; slug: string };
@@ -247,6 +275,9 @@ export async function createPost(data: CreatePostInput): Promise<{ id: string; t
  * Publish a draft post
  */
 export async function publishPost(id: string): Promise<{ id: string; title: string; slug: string } | null> {
+  if (!hygraphMutationClient) {
+    throw new Error("Hygraph mutation endpoint not configured. Cannot publish post.");
+  }
   try {
     const result = await hygraphMutationClient.request<{
       publishPost: { id: string; title: string; slug: string };
@@ -276,6 +307,9 @@ export async function updatePost(
   id: string,
   data: Partial<CreatePostInput>
 ): Promise<{ id: string; title: string; slug: string } | null> {
+  if (!hygraphMutationClient) {
+    throw new Error("Hygraph mutation endpoint not configured. Cannot update post.");
+  }
   try {
     const updateData: Record<string, unknown> = {};
     if (data.title) updateData.title = data.title;
@@ -300,6 +334,9 @@ export async function updatePost(
  * Delete a post
  */
 export async function deletePost(id: string): Promise<boolean> {
+  if (!hygraphMutationClient) {
+    throw new Error("Hygraph mutation endpoint not configured. Cannot delete post.");
+  }
   try {
     await hygraphMutationClient.request(DELETE_POST, { id });
     return true;

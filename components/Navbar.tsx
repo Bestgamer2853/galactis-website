@@ -62,6 +62,7 @@ export default function Navbar() {
         <nav className="hidden items-center gap-6 md:flex">
           <ProductsDropdown />
           <SolutionsDropdown />
+          <NavLink href="/resources/blog">Blog</NavLink>
           <NavLink href="/partner">Partners</NavLink>
           <NavLink href="/company/careers">Careers</NavLink>
           <NavLink href="/company/about">Company</NavLink>

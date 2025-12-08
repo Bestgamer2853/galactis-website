@@ -40,7 +40,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: post.excerpt,
       type: "article",
       publishedTime: post.publishedDate,
+      ...(post.coverImage?.url && {
+        images: [
+          {
+            url: post.coverImage.url,
+            width: 1200,
+            height: 630,
+            alt: post.title,
+          },
+        ],
+      }),
     },
+    ...(post.coverImage?.url && {
+      twitter: {
+        card: "summary_large_image",
+        images: [post.coverImage.url],
+      },
+    }),
   };
 }
 
@@ -137,11 +153,45 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         </header>
 
+        {/* Cover Image - Shows between header and article content */}
+        {post.coverImage?.url && post.coverImage.url.trim() !== "" ? (
+          <div className="mb-12 -mx-4 sm:mx-0">
+            <img
+              src={post.coverImage.url}
+              alt={post.title}
+              className="w-full h-auto rounded-2xl object-cover shadow-lg"
+              onError={(e) => {
+                console.error("Failed to load cover image:", post.coverImage?.url);
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          </div>
+        ) : null}
+
         {/* Article Content */}
-        <article className="prose prose-lg prose-zinc mx-auto dark:prose-invert prose-headings:font-bold prose-a:text-purple-600 prose-a:no-underline hover:prose-a:underline dark:prose-a:text-purple-400">
-          {/* Render content - supports HTML or plain text */}
+        <article className="prose prose-lg prose-zinc mx-auto dark:prose-invert prose-headings:font-bold prose-a:text-purple-600 prose-a:no-underline hover:prose-a:underline dark:prose-a:text-purple-400 prose-img:rounded-xl prose-img:shadow-lg">
+          {/* Render content - supports HTML, markdown, or plain text */}
           {post.content?.includes("<") ? (
             <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          ) : post.content?.includes("![") || post.content?.includes("](") ? (
+            // Render markdown images and links
+            <div
+              dangerouslySetInnerHTML={{
+                __html: post.content
+                  // Convert markdown images to HTML img tags
+                  .replace(
+                    /!\[([^\]]*)\]\(([^)]+)\)/g,
+                    '<img src="$2" alt="$1" class="w-full h-auto rounded-xl shadow-lg my-6" loading="lazy" />'
+                  )
+                  // Convert markdown links to HTML
+                  .replace(
+                    /\[([^\]]+)\]\(([^)]+)\)/g,
+                    '<a href="$2" class="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 underline" target="_blank" rel="noopener noreferrer">$1</a>'
+                  )
+                  // Convert line breaks
+                  .replace(/\n/g, "<br />"),
+              }}
+            />
           ) : (
             <div className="whitespace-pre-wrap">{post.content}</div>
           )}

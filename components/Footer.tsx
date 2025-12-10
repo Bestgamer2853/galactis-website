@@ -42,7 +42,7 @@ export default function Footer() {
                   alt="Galactis.ai logo"
                   className="h-10 w-auto"
               />
-                <span className="text-base font-semibold tracking-wide">Galactis.ai</span>
+                <span className="text-base font-semibold tracking-wide text-white dark:text-white">Galactis.ai</span>
             </Link>
               <p className="text-sm text-white/70">
                 The leading platform for technology leaders. ITAM, NetOps, and AI agents.

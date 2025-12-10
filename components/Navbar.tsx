@@ -54,7 +54,7 @@ export default function Navbar() {
                 style={{ display: "block", maxWidth: "none", objectFit: "contain" }}
               />
             </motion.div>
-            <span className="text-lg md:text-xl font-semibold bg-gradient-to-r from-purple-600 to-emerald-600 bg-clip-text text-transparent leading-none">
+            <span className="text-lg md:text-xl font-semibold text-zinc-900 dark:text-white leading-none">
               Galactis.ai
             </span>
           </Link>

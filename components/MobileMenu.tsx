@@ -126,7 +126,7 @@ export default function MobileMenu() {
                           className="h-10 w-auto flex-shrink-0 md:h-12"
                           style={{ display: "block", maxWidth: "none", objectFit: "contain" }}
                         />
-                        <span className="text-lg font-semibold leading-none">Galactis.ai</span>
+                        <span className="text-lg font-semibold text-zinc-900 dark:text-white leading-none">Galactis.ai</span>
                       </Link>
                       <Dialog.Close asChild>
                         <button

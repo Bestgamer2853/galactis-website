@@ -1,21 +1,14 @@
 import { GraphQLClient } from "graphql-request";
 
 // Initialize the GraphQL client for reading content (CDN endpoint)
-// CDN endpoint is for public read access - no auth token needed for published content
-// However, token can be used for draft content or if permissions require it
+// CDN endpoint is for public read access - NO auth token needed for published content
+// Token is NOT sent to CDN endpoint as it can cause verification errors
 const hygraphEndpoint = process.env.HYGRAPH_ENDPOINT || "";
 
-// Read-only client (optionally authenticated for draft content or permissions)
+// Read-only client (no auth for CDN - published content is public)
 // Only create client if endpoint is configured
 export const hygraphClient: GraphQLClient | null = hygraphEndpoint 
-  ? new GraphQLClient(hygraphEndpoint, {
-      headers: {
-        // Include token if provided (useful for draft content or permission-based access)
-        ...(process.env.HYGRAPH_TOKEN && {
-          Authorization: `Bearer ${process.env.HYGRAPH_TOKEN}`,
-        }),
-      },
-    })
+  ? new GraphQLClient(hygraphEndpoint)
   : null;
 
 // Mutation endpoint (non-CDN, requires auth token)

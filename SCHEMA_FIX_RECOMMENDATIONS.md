@@ -144,3 +144,6 @@ If Hygraph doesn't allow changing the reference type:
 **If that doesn't work**: Check Asset model permissions and API access settings
 
 The schema configuration itself (single asset, required field) looks correct - the issue is likely the reference type causing CDN/API sync problems.
+
+
+

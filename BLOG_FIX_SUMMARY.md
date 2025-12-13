@@ -63,3 +63,6 @@ The cover image URLs are currently empty (`""`) in Hygraph. This is a separate i
 ---
 
 **Status**: ✅ **FIXED** - Blog page now shows real Hygraph posts!
+
+
+

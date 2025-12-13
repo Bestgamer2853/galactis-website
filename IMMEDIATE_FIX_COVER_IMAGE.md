@@ -115,3 +115,6 @@ If that doesn't work after 5 minutes, try Step 3 (complete unlink/re-link).
 - **Be patient** - CDN sync can take up to 5 minutes
 
 The code on your website is correct - once Hygraph's API returns the URL, the image will appear automatically! 🖼️
+
+
+

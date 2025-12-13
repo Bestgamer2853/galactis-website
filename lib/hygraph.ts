@@ -1,13 +1,21 @@
 import { GraphQLClient } from "graphql-request";
 
 // Initialize the GraphQL client for reading content (CDN endpoint)
-// CDN endpoint is for public read access - no auth token needed
+// CDN endpoint is for public read access - no auth token needed for published content
+// However, token can be used for draft content or if permissions require it
 const hygraphEndpoint = process.env.HYGRAPH_ENDPOINT || "";
 
-// Read-only client (no auth needed for published content on CDN)
+// Read-only client (optionally authenticated for draft content or permissions)
 // Only create client if endpoint is configured
 export const hygraphClient: GraphQLClient | null = hygraphEndpoint 
-  ? new GraphQLClient(hygraphEndpoint)
+  ? new GraphQLClient(hygraphEndpoint, {
+      headers: {
+        // Include token if provided (useful for draft content or permission-based access)
+        ...(process.env.HYGRAPH_TOKEN && {
+          Authorization: `Bearer ${process.env.HYGRAPH_TOKEN}`,
+        }),
+      },
+    })
   : null;
 
 // Mutation endpoint (non-CDN, requires auth token)
@@ -110,7 +118,7 @@ export async function getAllPosts(
   skip: number = 0
 ): Promise<BlogPost[]> {
   if (!hygraphClient) {
-    console.warn("Hygraph endpoint not configured. Returning empty posts array.");
+    console.warn("⚠️ Hygraph endpoint not configured. Set HYGRAPH_ENDPOINT in environment variables.");
     return [];
   }
   try {
@@ -121,12 +129,22 @@ export async function getAllPosts(
     const posts = data.posts || [];
     if (posts.length > 0) {
       console.log(`✅ Successfully fetched ${posts.length} posts from Hygraph`);
+      console.log(`📝 Post titles:`, posts.map((p) => p.title).join(", "));
+    } else {
+      console.warn("⚠️ Hygraph returned 0 posts. Check that posts are published in Hygraph Studio.");
     }
     return posts;
   } catch (error) {
     console.error("❌ Error fetching posts from Hygraph:", error);
     if (error instanceof Error) {
       console.error("Error message:", error.message);
+      // Check for common schema mismatch issues
+      if (error.message.includes("publishedDate")) {
+        console.error("💡 TIP: Your Hygraph schema might use 'publishedAt' instead of 'publishedDate'. Check your Post model fields.");
+      }
+      if (error.message.includes("Cannot query field")) {
+        console.error("💡 TIP: GraphQL query field mismatch. Verify your Hygraph Post model matches the query fields.");
+      }
     }
     return [];
   }

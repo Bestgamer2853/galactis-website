@@ -149,3 +149,6 @@ Change `3600` to:
 4. **No code changes or redeployment needed!**
 
 You can publish as many blogs as you want in Hygraph, and they'll automatically appear on your website! 🚀
+
+
+

@@ -166,3 +166,6 @@ If you're still having issues after following these steps:
 4. **Try a different image** to rule out file corruption
 
 The code is working correctly - the issue is that Hygraph needs the image to be properly linked and the post to be republished!
+
+
+

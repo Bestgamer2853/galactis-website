@@ -88,13 +88,21 @@ export default async function BlogPage() {
     if (posts.length > 0) {
       console.log(`[Blog Page] Post titles:`, posts.map((p) => p.title));
     } else {
-      console.warn("[Blog Page] No posts from Hygraph - check if endpoint is configured");
+      console.warn("[Blog Page] ⚠️ No posts from Hygraph");
+      console.warn("[Blog Page] Possible causes:");
+      console.warn("  1. HYGRAPH_ENDPOINT not set in environment variables");
+      console.warn("  2. No published posts in Hygraph Studio");
+      console.warn("  3. GraphQL query field mismatch (check schema)");
+      console.warn("  4. Network/API error - check server logs above");
     }
   }
 
-  // Use fallback if no posts returned (Hygraph not configured)
-  if (posts.length === 0) {
-    console.warn("[Blog Page] Using fallback posts - Hygraph posts not available");
+  // Use fallback if no posts returned (Hygraph not configured or error)
+  const isUsingFallback = posts.length === 0;
+  if (isUsingFallback) {
+    console.warn("[Blog Page] ⚠️ Using fallback placeholder posts - real Hygraph posts not available");
+    console.warn("[Blog Page] To fix: Ensure HYGRAPH_ENDPOINT is set and posts are published in Hygraph");
+    console.warn("[Blog Page] Visit /api/blog-diagnostic to check connection status");
     posts = fallbackPosts;
   }
 
@@ -137,6 +145,18 @@ export default async function BlogPage() {
             Thought leadership and technical tutorials from the Galactis.ai
             engineering, product, and strategy teams.
           </p>
+          {isUsingFallback && process.env.NODE_ENV === "development" && (
+            <div className="mx-auto mt-6 max-w-2xl rounded-lg border border-yellow-500/50 bg-yellow-50 p-4 text-sm text-yellow-800 dark:border-yellow-500/30 dark:bg-yellow-900/20 dark:text-yellow-300">
+              <p className="font-semibold">⚠️ Development Notice: Using Placeholder Posts</p>
+              <p className="mt-1">
+                Real Hygraph posts are not available. Check{" "}
+                <a href="/api/blog-diagnostic" className="underline hover:text-yellow-900 dark:hover:text-yellow-200">
+                  /api/blog-diagnostic
+                </a>{" "}
+                for connection status.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Blog Grid */}

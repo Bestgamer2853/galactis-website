@@ -139,3 +139,6 @@ In Hygraph, there are **two separate steps**:
 2. **Link Asset to Post Field** ← This is what's missing ❌
 
 Both must be done for the image to appear on your website!
+
+
+

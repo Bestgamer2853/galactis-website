@@ -142,3 +142,6 @@ curl "https://ap-south-1.cdn.hygraph.com/content/cmioez7bb01n507walq7vz2vr/maste
 **The result**: Image will appear between the header and article content
 
 Once you fix the image link in Hygraph, it will automatically appear on your website! 🖼️
+
+
+

@@ -126,3 +126,6 @@ The image is uploaded but **not properly linked** to the blog post field. This c
 **Result**: Image will appear between header and content
 
 The debug logs I added will help you verify when it's working! 🖼️
+
+
+

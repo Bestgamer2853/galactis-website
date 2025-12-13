@@ -168,3 +168,6 @@ curl -X POST "https://api-ap-south-1.hygraph.com/v2/cmioez7bb01n507walq7vz2vr/ma
 ---
 
 **This is a Hygraph platform issue, not a code issue. Your website code is correct and will work once Hygraph's API returns the URL.**
+
+
+

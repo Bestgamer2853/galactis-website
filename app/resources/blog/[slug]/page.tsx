@@ -135,8 +135,6 @@ export default async function BlogPostPage({ params }: Props) {
           {
             gfm: true,
             breaks: true,
-            headerIds: false,
-            mangle: false,
             renderer,
           }
         ) as string)

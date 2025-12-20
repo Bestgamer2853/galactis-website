@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Award, Trophy, Building2, Calculator, X } from "lucide-react";
 import CompanyLogo from "./CompanyLogo";
 
-const logos = ["ICICI Bank", "Airtel", "Apollo Hospitals", "Ashok Leyland", "TVS Motors", "Infosys"];
+const logos = ["ICICI Bank", "Airtel", "Ashok Leyland", "TVS Motors", "Infosys", "Corpay"];
 
 const awards = [
   { title: "Gartner Cool Vendor", year: "2024" },

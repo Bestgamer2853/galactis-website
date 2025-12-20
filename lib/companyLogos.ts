@@ -1,53 +1,74 @@
-// Company logo data with URLs from reliable sources
+// Company logo data - using local files for reliability
+// All logos are stored in /public/logos/ directory
+
+// External APIs as fallback (if local files fail)
+const getClearbitLogo = (domain: string, size: number = 256): string => {
+  return `https://logo.clearbit.com/${domain}?size=${size}`;
+};
+
+const getGoogleFavicon = (domain: string, size: number = 256): string => {
+  return `https://www.google.com/s2/favicons?domain=${domain}&sz=${size}`;
+};
+
 export const companyLogos = [
   {
     name: "ICICI Bank",
-    logo: "https://logo.clearbit.com/icicibank.com",
+    logo: "/logos/icici-bank.svg",
+    fallbackLogo: getGoogleFavicon("icicibank.com", 256),
     fallbackColor: "#F47920"
   },
   {
     name: "HDFC Bank",
-    logo: "https://logo.clearbit.com/hdfcbank.com",
+    logo: "/logos/hdfc-bank.png",
+    fallbackLogo: getGoogleFavicon("hdfcbank.com", 256),
     fallbackColor: "#004C8F"
   },
   {
     name: "Infosys",
-    logo: "https://logo.clearbit.com/infosys.com",
+    logo: "/logos/infosys.svg",
+    fallbackLogo: getGoogleFavicon("infosys.com", 256),
     fallbackColor: "#007CC2"
   },
   {
     name: "TCS",
-    logo: "https://logo.clearbit.com/tcs.com",
+    logo: "/logos/tcs.svg",
+    fallbackLogo: getGoogleFavicon("tcs.com", 256),
     fallbackColor: "#001489"
   },
   {
     name: "Apollo Hospitals",
-    logo: "https://logo.clearbit.com/apollohospitals.com",
+    logo: "/logos/apollo-hospitals.png",
+    fallbackLogo: getGoogleFavicon("apollohospitals.com", 256),
     fallbackColor: "#00A651"
   },
   {
     name: "TVS Motors",
-    logo: "https://logo.clearbit.com/tvsmotor.com",
+    logo: "/logos/tvs-motors.png",
+    fallbackLogo: getGoogleFavicon("tvsmotor.com", 256),
     fallbackColor: "#E31E24"
   },
   {
     name: "Airtel",
-    logo: "https://logo.clearbit.com/airtel.in",
+    logo: "/logos/airtel.png",
+    fallbackLogo: getGoogleFavicon("airtel.in", 256),
     fallbackColor: "#ED1C24"
   },
   {
     name: "Ashok Leyland",
-    logo: "https://logo.clearbit.com/ashokleyland.com",
+    logo: "/logos/ashok-leyland.png",
+    fallbackLogo: getGoogleFavicon("ashokleyland.com", 256),
     fallbackColor: "#003DA5"
   },
   {
     name: "LOM Logistics",
-    logo: "https://logo.clearbit.com/lomlogistics.com",
+    logo: "/lom-logistics-logo.png",
+    fallbackLogo: getClearbitLogo("lomlogistics.com", 256),
     fallbackColor: "#0066CC"
   },
   {
     name: "Corpay",
-    logo: "https://logo.clearbit.com/corpay.com",
+    logo: "/logos/corpay.png",
+    fallbackLogo: getGoogleFavicon("corpay.com", 256),
     fallbackColor: "#00A3E0"
   },
 ];

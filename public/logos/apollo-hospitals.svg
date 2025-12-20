@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" width="400" height="120">
+  <defs>
+    <linearGradient id="apolloGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00A651;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#008A43;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- White background for visibility -->
+  <rect width="400" height="120" fill="white" rx="8"/>
+  
+  <!-- Apollo Hospitals Logo -->
+  <g>
+    <!-- Profile with cap and cross -->
+    <g transform="translate(20, 15)">
+      <!-- Head -->
+      <ellipse cx="35" cy="35" rx="22" ry="25" fill="url(#apolloGreen)"/>
+      <!-- Cap -->
+      <rect x="16" y="18" width="38" height="12" rx="6" fill="url(#apolloGreen)"/>
+      <!-- Cross on cap (more visible) -->
+      <g stroke="white" stroke-width="3.5" stroke-linecap="round">
+        <line x1="22" y1="21" x2="22" y2="26"/>
+        <line x1="19.5" y1="23.5" x2="24.5" y2="23.5"/>
+      </g>
+      <!-- Face profile -->
+      <path d="M 35 35 Q 44 44 52 55 Q 55 63 52 72" stroke="url(#apolloGreen)" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      <!-- Body/arm -->
+      <path d="M 52 72 Q 66 82 75 95" stroke="url(#apolloGreen)" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+      <!-- Torch handle -->
+      <rect x="72" y="92" width="8" height="18" rx="4" fill="url(#apolloGreen)"/>
+      <!-- Torch flame (yellow/orange) -->
+      <path d="M 76 92 Q 66 78 76 62 Q 86 78 76 92" fill="#FFD700"/>
+      <path d="M 76 92 Q 71 82 76 72 Q 81 82 76 92" fill="#FFA500"/>
+      <ellipse cx="76" cy="68" rx="7" ry="10" fill="#FFD700" opacity="0.9"/>
+    </g>
+    
+    <!-- Apollo text -->
+    <text x="120" y="50" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="bold" fill="url(#apolloGreen)">Apollo</text>
+    <text x="120" y="80" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#666666" font-weight="500">Hospitals</text>
+  </g>
+</svg>

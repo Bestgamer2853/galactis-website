@@ -8,11 +8,10 @@ const partners = [
   { name: "HDFC Bank", metric: "Network resilience & monitoring" },
   { name: "Infosys", metric: "AI agent orchestration" },
   { name: "TCS", metric: "Enterprise IT asset governance" },
-  { name: "Apollo Hospitals", metric: "HIPAA-ready infrastructure ops" },
+  { name: "Corpay", metric: "Financial operations & payments" },
   { name: "TVS Motors", metric: "Manufacturing ITAM & automation" },
   { name: "Airtel", metric: "Predictive network assurance" },
   { name: "Ashok Leyland", metric: "OT/IT convergence platform" },
-  { name: "Corpay", metric: "Financial operations & payments" },
 ];
 
 export default function CustomersMarquee() {
